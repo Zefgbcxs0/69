@@ -1,0 +1,47 @@
+import sqlite3
+
+# 1. Створення (або відкриття) бази даних
+conn = sqlite3.connect("FruitBasket.db")
+cursor = conn.cursor()
+
+# 2. Створення таблиці
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Fruits (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nazva TEXT,
+    Kolir TEXT
+)
+""")
+
+# 3. Додавання фруктів
+cursor.execute("INSERT INTO Fruits (Nazva, Kolir) VALUES (?, ?)", ("Яблуко", "Червоне"))
+cursor.execute("INSERT INTO Fruits (Nazva, Kolir) VALUES (?, ?)", ("Банан", "Жовтий"))
+cursor.execute("INSERT INTO Fruits (Nazva, Kolir) VALUES (?, ?)", ("Апельсин", "Помаранчевий"))
+
+conn.commit()
+
+# 4. Зміна кольору Яблука
+cursor.execute("""
+UPDATE Fruits
+SET Kolir = ?
+WHERE Nazva = ?
+""", ("Зелене", "Яблуко"))
+
+conn.commit()
+
+# 5. Вибір жовтих фруктів
+print("Жовті фрукти:")
+cursor.execute("SELECT * FROM Fruits WHERE Kolir = ?", ("Жовтий",))
+yellow_fruits = cursor.fetchall()
+for fruit in yellow_fruits:
+    print(fruit)
+
+# 6. Виведення всіх записів
+print("\nВсі фрукти:")
+cursor.execute("SELECT * FROM Fruits")
+all_fruits = cursor.fetchall()
+for fruit in all_fruits:
+    print(fruit)
+
+# Закриття з'єднання
+conn.close()
